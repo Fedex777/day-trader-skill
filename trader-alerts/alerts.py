@@ -609,6 +609,13 @@ def cmd_check(a):
                                               status["reason"]))
         for r in rings:
             print("ALERT " + r["message"])
+            try:
+                import sys as _sys, os as _os
+                _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), "..", "trader"))
+                from notify import send_telegram
+                send_telegram("ALERT " + r["message"])
+            except Exception:
+                pass  # Telegram ist ein Extra, darf den Alert-Check nie blockieren
         if not rings:
             print("Nothing hit. %d rule(s) watched today%s." % (
                 len(watched), (", " + ", ".join("%s $%.2f" % (s, quotes[s]["price"]) for s in syms if s in quotes))
